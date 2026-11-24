@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mastervoice Demo · MasterCallers</title>
+<link rel="stylesheet" href="styles.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;510;600&display=swap" rel="stylesheet">
+<style>
+  .demo-wrap { max-width: 640px; }
+  .transcript {
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: 8px;
+    min-height: 280px;
+    padding: 20px;
+    margin: 24px 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    overflow-y: auto;
+  }
+  .transcript .line { margin-bottom: 12px; }
+  .transcript .you { color: var(--text); }
+  .transcript .system { color: var(--text-muted); }
+  .controls { display: flex; gap: 12px; align-items: center; }
+  .status { font-size: 13px; color: var(--text-muted); }
+  .note { margin-top: 32px; font-size: 13px; color: var(--text-muted); max-width: 480px; }
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo"><a href="index.html">MasterCallers</a></div>
+  <div class="nav-links">
+    <a href="development.html">Development</a>
+    <a href="training.html">Training</a>
+    <a href="teams.html">Teams</a>
+    <a href="curriculum.html">Curriculum</a>
+    <a href="work.html">Work</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+    <a href="contact.html" class="btn">Start a project</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <h1>Mastervoice</h1>
+  <p>Qualification demo. One job: gather name, organization, reason, and urgency, then hand off a structured record.</p>
+  <div class="accent-bar"></div>
+</section>
+
+<section class="section">
+  <div class="demo-wrap">
+    <div class="controls">
+      <button id="start" class="btn">Start call</button>
+      <button id="end" class="btn btn-ghost" disabled>End call</button>
+      <span id="status" class="status">Ready</span>
+    </div>
+    <div id="transcript" class="transcript">
+      <div class="line system">Waiting to start.</div>
+    </div>
+    <p class="note">This page is wired for Vapi's web SDK. Add your public key and assistant ID in the script to activate the live demo. The assistant prompt is in mastervoice-prompt.md.</p>
+  </div>
+</section>
+
+<footer class="footer">
+  <div>MasterCallers</div>
+  <div><a href="development.html">Development</a></div>
+</footer>
+
+<script type="module">
+  const VAPI_PUBLIC_KEY = "YOUR_VAPI_PUBLIC_KEY";
+  const ASSISTANT_ID = "YOUR_ASSISTANT_ID";
+
+  const transcriptEl = document.getElementById("transcript");
+  const startBtn = document.getElementById("start");
+  const endBtn = document.getElementById("end");
+  const statusEl = document.getElementById("status");
+
+  function addLine(text, cls) {
+    const div = document.createElement("div");
+    div.className = "line " + cls;
+    div.textContent = text;
+    transcriptEl.appendChild(div);
+    transcriptEl.scrollTop = transcriptEl.scrollHeight;
+  }
+
+  let vapi = null;
+
+  async function init() {
+    if (VAPI_PUBLIC_KEY === "YOUR_VAPI_PUBLIC_KEY") {
+      statusEl.textContent = "Add Vapi key and assistant ID to activate";
+      return;
+    }
+    const { default: Vapi } = await import("https://esm.sh/@vapi-ai/web");
+    vapi = new Vapi(VAPI_PUBLIC_KEY);
+
+    vapi.on("call-start", () => {
+      statusEl.textContent = "Connected";
+      startBtn.disabled = true;
+      endBtn.disabled = false;
+      transcriptEl.innerHTML = "";
+      addLine("Call started.", "system");
+    });
+
+    vapi.on("call-end", () => {
+      statusEl.textContent = "Ended";
+      startBtn.disabled = false;
+      endBtn.disabled = true;
+      addLine("Call ended.", "system");
+    });
+
+    vapi.on("message", (msg) => {
+      if (msg.type === "transcript" && msg.transcriptType === "final") {
+        const cls = msg.role === "assistant" ? "system" : "you";
+        const label = msg.role === "assistant" ? "System" : "You";
+        addLine(label + ": " + msg.transcript, cls);
+      }
+    });
+
+    vapi.on("error", (err) => {
+      statusEl.textContent = "Error";
+      addLine("Error: " + (err.message || err), "system");
+    });
+  }
+
+  startBtn.addEventListener("click", async () => {
+    if (!vapi) {
+      addLine("Vapi not configured. Add public key and assistant ID.", "system");
+      return;
+    }
+    statusEl.textContent = "Connecting...";
+    try {
+      await vapi.start(ASSISTANT_ID);
+    } catch (e) {
+      statusEl.textContent = "Failed to start";
+      addLine("Could not start call.", "system");
+    }
+  });
+
+  endBtn.addEventListener("click", () => {
+    if (vapi) vapi.stop();
+  });
+
+  init();
+</script>
+</body>
+</html>
