@@ -151,6 +151,29 @@ nav {
 .card:hover { border-color: rgba(255,255,255,0.16); }
 .card h3 { font-size: 15px; font-weight: 510; margin-bottom: 4px; }
 .card p { color: var(--text-muted); font-size: 13px; }
+.training-card { display: flex; flex-direction: column; min-height: 170px; }
+.training-card:hover { border-color: var(--accent); background: var(--surface-2); }
+.training-card:focus-visible, .training-back:focus-visible, .training-cta:focus-visible {
+  outline: 2px solid #aab1ff;
+  outline-offset: 3px;
+}
+.training-card-link { color: #aab1ff; font-size: 13px; margin-top: auto; padding-top: 20px; }
+.training-detail-hero { display: block; max-width: 940px; }
+.training-back { display: inline-block; color: #aab1ff; margin-bottom: 32px; font-size: 14px; }
+.training-kicker { color: #aab1ff; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 18px; }
+.training-detail-hero h1 { max-width: 900px; }
+.training-detail-hero p { max-width: 700px; color: var(--text-secondary); }
+.training-detail { max-width: 940px; }
+.training-detail h2 { font-size: 26px; margin-bottom: 18px; }
+.training-detail p { color: var(--text-secondary); font-size: 16px; line-height: 1.7; margin-bottom: 18px; }
+.training-detail ul { padding-left: 24px; margin: 0 0 30px; color: var(--text-secondary); font-size: 16px; line-height: 1.7; }
+.training-detail li { margin-bottom: 10px; }
+.training-detail-block { margin-bottom: 48px; }
+.training-detail-result { padding: 28px; border: 1px solid rgba(94, 106, 210, .36); background: var(--accent-soft); border-radius: 8px; }
+.training-detail-result p { margin-bottom: 0; }
+.training-detail-nav { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; margin-top: 36px; }
+.training-cta { display: inline-block; }
+#build, #run, #lead { scroll-margin-top: 90px; }
 .card .label {
   font-size: 11px;
   letter-spacing: 0.05em;
