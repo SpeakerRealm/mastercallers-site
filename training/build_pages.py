@@ -73,6 +73,7 @@ NAV = '''<nav>
     <a href="../work.html">Work</a><a href="../about.html">About</a>
     <a href="../contact.html">Contact</a><a href="../contact.html" class="btn">Start a project</a>
   </div>
+  <details class="mobile-menu"><summary>Menu</summary><div class="mobile-menu-links"><a href="../work.html">Work</a><a href="../development.html">What we build</a><a href="../training.html">Training</a><a href="../teams.html">Teams</a><a href="../curriculum.html">Curriculum</a><a href="../about.html">About</a><a href="../contact.html">Contact</a></div></details>
 </nav>'''
 
 for topic in TOPICS:
